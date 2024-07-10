@@ -21,3 +21,7 @@ Genetic Decision Trees are slower. But manageable. Can disable creating mutation
 Is other work trying to make DTs more reliable, including Optimal Sparce Decision Trees, oblique decision trees, oblivious trees, AdditiveDecisionTrees, FormulaFeatures. 
 
 DTs are naturally quite interpretable if kept to small size but are still accurate, so it's natural much of the work in interpretable AI, including my own, has worked with trying to make decision trees more accurate and interpretable. 
+
+DTs can be fairly sensitive to the training data, so by using different bootstrap samples, can induce different trees. Also set the random_state differently each time. Doing this can generate a large number of trees and then test the trees as a whole. That is, decision trees are constructed in a greedy manner (though it is possible to constrain them and to prune them), which means each decision considers only the current split and this is based only on the data in this subspace. With Genetic Decision Trees, on the otherhand, the construction is largely random (other than the construction done by scikit-learn decision trees (which are used internally for some tree generation), but the decisions make during fitting relate to the fit of the tree as a whole to the available training data.
+
+
