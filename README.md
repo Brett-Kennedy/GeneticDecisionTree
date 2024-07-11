@@ -26,3 +26,6 @@ DTs can be fairly sensitive to the training data, so by using different bootstra
 
 if disable mutations and combinations, just have random trees, so not really a genetic algorithm in this case, but can nevertheless generate strong trees, and is much faster. Is worth trying both. 
 
+Mutating
+can also rotate nodes, but doesn't tend to work well. future work may improve this. 
+
