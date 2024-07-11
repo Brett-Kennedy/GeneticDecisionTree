@@ -41,6 +41,7 @@ I can use DatasetsEvaluator. I'll try to make it internally parallel though, the
 Tuning
 Is easy to tune since few parameters.
 can try running with no mutating or combining. That's not really genetic, but can be fine, and is much faster. If good enough, you're done. If not, can run longer, or can try mutating & combining. Usually get a bit better results.
+usually more iterations is better, but is more inclined to overfit. Does not get more complex though, just tries more combinations. 
 
 With the synthetic data, the tree found looks like:
 IF c < 0.9016
@@ -51,9 +52,18 @@ IF c < 0.9016
 | | | ELSE d > 0.7046
 | | | | W
 
+give a full example of the synth so can see the full tree. 
+
 We can see the thresholds are close to the true thresholds, but not quite. Adjust may be helpful.
 
 If we just use random, it's a bit like a RF. Many trees based on bootstrap sample. Though, uses the best tree instead of an ensemble of many. 
 
 Verbose Output
 describe this
+
+Other work
+there are many papers discussing creating decision trees using genetic algorithms. This is just one example, but does have a python implementation on github.
+
+There's also optimal sparce decision trees.
+
+
