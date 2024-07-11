@@ -42,7 +42,14 @@ Tuning
 Is easy to tune since few parameters.
 can try running with no mutating or combining. That's not really genetic, but can be fine, and is much faster. If good enough, you're done. If not, can run longer, or can try mutating & combining. Usually get a bit better results.
 
+With the synthetic data, the tree found looks like:
+IF c < 0.9016
+| IF b < 0.9098
+| | IF a < 0.6904
+| | | IF d < 0.7046
+| | | | W
+| | | ELSE d > 0.7046
+| | | | W
 
-
-
+We can see the thresholds are close to the true thresholds, but not quite. Adjust may be helpful.
 
