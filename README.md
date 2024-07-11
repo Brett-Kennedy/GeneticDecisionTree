@@ -29,3 +29,6 @@ if disable mutations and combinations, just have random trees, so not really a g
 Mutating
 can also rotate nodes, but doesn't tend to work well. future work may improve this. 
 
+Random
+Uses log scale to get size of sample. can be up to 2* the actual size, but usually much smaller. At least 128.
+
