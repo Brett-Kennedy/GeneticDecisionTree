@@ -53,3 +53,7 @@ IF c < 0.9016
 
 We can see the thresholds are close to the true thresholds, but not quite. Adjust may be helpful.
 
+If we just use random, it's a bit like a RF. Many trees based on bootstrap sample. Though, uses the best tree instead of an ensemble of many. 
+
+Verbose Output
+describe this
