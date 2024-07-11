@@ -67,3 +67,6 @@ there are many papers discussing creating decision trees using genetic algorithm
 There's also optimal sparce decision trees.
 
 standard DTs, though choices may be sub-optimal, can compensate lower in the tree. Are stuck with the choices though. And going deeper to correct choices goes against interpretability. want small trees. 
+
+RotationFeatures, ArithmeticFeatures and FormulaFeatures
+can combine these and create stronger DTs still. 
