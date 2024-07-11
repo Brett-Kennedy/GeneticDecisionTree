@@ -32,3 +32,17 @@ can also rotate nodes, but doesn't tend to work well. future work may improve th
 Random
 Uses log scale to get size of sample. can be up to 2* the actual size, but usually much smaller. At least 128.
 
+Overfitting
+like most models, tries to fit the training data as well as it can, so can overfit. but the idea is to keep small, so tends not to drastically overfit. 
+
+Evaluate
+I can use DatasetsEvaluator. I'll try to make it internally parallel though, then just loop through a bunch of files, which is maybe easier.
+
+Tuning
+Is easy to tune since few parameters.
+can try running with no mutating or combining. That's not really genetic, but can be fine, and is much faster. If good enough, you're done. If not, can run longer, or can try mutating & combining. Usually get a bit better results.
+
+
+
+
+
