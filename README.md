@@ -1,22 +1,11 @@
 # GeneticDecisionTree
 Decision Tree built using a genetic algorithm
 
+## Motiviation
 
 the greedy approach used by DTs is far from optimal. It is fast, which was necessary historically with slower computers, even with usually smaller data. And is useful in bagged & boosted ensembles (eg RandomForest, ExtraTrees, CatBoost, XGBoost, LGBM, ect.)
 
 but is not optimal, and often other trees of the same size can be more accurate.
-
-we focus on max_depth=4. For interpretable, probably want 3, 4, or 5.
-
-interestingly, simply creating many dts based on boostrap samples and taking the best often works the best or nearly, and is quite fast.
-
-This also does mutations based on adjusting the thresholds. Can be set at one splitpoint during construction, but given the sub-trees built underneath them, a different can often work better, though typically only slightly. This works by taking the top 10 trees created so far, and creating 50 variations on each: picking 5 random nodes, and for each of these, 10 new thresholds.
-
-And does combinations. Where two trees among the top 20 have the same feature in the root node, will create 2 combinations: one with the left sub-tree from the first parent tree and the right sub-tree from the second parent tree, and one that's the reverse. 
-
-Running the test notebook is very slow. Tests many files.
-
-Genetic Decision Trees are slower. But manageable. Can disable creating mutations or combinations if want faster. Then will just create random trees based on bootstrap samples.
 
 Is other work trying to make DTs more reliable, including Optimal Sparce Decision Trees, oblique decision trees, oblivious trees, AdditiveDecisionTrees, FormulaFeatures. 
 
@@ -24,20 +13,65 @@ DTs are naturally quite interpretable if kept to small size but are still accura
 
 DTs can be fairly sensitive to the training data, so by using different bootstrap samples, can induce different trees. Also set the random_state differently each time. Doing this can generate a large number of trees and then test the trees as a whole. That is, decision trees are constructed in a greedy manner (though it is possible to constrain them and to prune them), which means each decision considers only the current split and this is based only on the data in this subspace. With Genetic Decision Trees, on the otherhand, the construction is largely random (other than the construction done by scikit-learn decision trees (which are used internally for some tree generation), but the decisions make during fitting relate to the fit of the tree as a whole to the available training data.
 
-if disable mutations and combinations, just have random trees, so not really a genetic algorithm in this case, but can nevertheless generate strong trees, and is much faster. Is worth trying both. 
+there are many papers discussing creating decision trees using genetic algorithms. This is just one example, but does have a python implementation on github.
 
-Mutating
-can also rotate nodes, but doesn't tend to work well. future work may improve this. 
+There's also optimal sparce decision trees.
 
-Random
+standard DTs, though choices may be sub-optimal, can compensate lower in the tree. Are stuck with the choices though. And going deeper to correct choices goes against interpretability. want small trees. 
+genetic (and other such) algorithms to optimize accuracy can be quite slow. Here, there is less of an issue as we assume we constrain the size of the tree to a small size. 
+
+RotationFeatures, ArithmeticFeatures and FormulaFeatures
+can combine these and create stronger DTs still. 
+
+
+## Implementation Details
+interestingly, simply creating many dts based on boostrap samples and taking the best often works the best or nearly, and is quite fast.
+
+This also does mutations based on adjusting the thresholds. Can be set at one splitpoint during construction, but given the sub-trees built underneath them, a different can often work better, though typically only slightly. This works by taking the top 10 trees created so far, and creating 50 variations on each: picking 5 random nodes, and for each of these, 10 new thresholds.
+
+And does combinations. Where two trees among the top 20 have the same feature in the root node, will create 2 combinations: one with the left sub-tree from the first parent tree and the right sub-tree from the second parent tree, and one that's the reverse. 
+
+Genetic Decision Trees are slower. But manageable. Can disable creating mutations or combinations if want faster. Then will just create random trees based on bootstrap samples.
+
+### Generating Random Decision Trees
 Uses log scale to get size of sample. can be up to 2* the actual size, but usually much smaller. At least 128.
 
-Overfitting
+if disable mutations and combinations, just have random trees, so not really a genetic algorithm in this case, but can nevertheless generate strong trees, and is much faster. Is worth trying both. 
+
+If we just use random, it's a bit like a RF. Many trees based on bootstrap sample. Though, uses the best tree instead of an ensemble of many. 
+
+
+### Mutating
+can also rotate nodes, but doesn't tend to work well. future work may improve this. 
+
+### Combining
+
+### Overfitting
+Decision Trees commonly overfit, and GeneticDecisionTrees may as well. 
+
 like most models, tries to fit the training data as well as it can, so can overfit. but the idea is to keep small, so tends not to drastically overfit. 
 
-Evaluate
-I can use DatasetsEvaluator. I'll try to make it internally parallel though, then just loop through a bunch of files, which is maybe easier.
+## Regression
 
+this supports regression, but it's difficult to have high accuracy with a shallow decision tree, even with a simple function. you need to zero in on the exact values. Possible only if the target column has relatively few unique values, or many, but in a small number of ranges. 
+
+
+## Examples
+
+Just a single class -- it infers from the target data the data type and handles the distinctions between regression and classification internally. 
+
+## Example Notebooks
+
+we focus on max_depth=4. For interpretable, probably want 3, 4, or 5.
+
+give a full example of the synth so can see the full tree. 
+
+
+Running the test notebook is very slow. Tests many files.
+
+Not a definitive evaluation, uses a small set of datasets, default parameters other than max_depth, and uses only f2 macro. 
+
+## Tuning
 Tuning
 Is easy to tune since few parameters.
 can try running with no mutating or combining. That's not really genetic, but can be fine, and is much faster. If good enough, you're done. If not, can run longer, or can try mutating & combining. Usually get a bit better results.
@@ -52,26 +86,16 @@ IF c < 0.9016
 | | | ELSE d > 0.7046
 | | | | W
 
-give a full example of the synth so can see the full tree. 
-
 We can see the thresholds are close to the true thresholds, but not quite. Adjust may be helpful.
 
-If we just use random, it's a bit like a RF. Many trees based on bootstrap sample. Though, uses the best tree instead of an ensemble of many. 
+## Installation
 
-Verbose Output
+
+## API
+
+
+### Verbose Output
 describe this
 
-Other work
-there are many papers discussing creating decision trees using genetic algorithms. This is just one example, but does have a python implementation on github.
 
-There's also optimal sparce decision trees.
 
-standard DTs, though choices may be sub-optimal, can compensate lower in the tree. Are stuck with the choices though. And going deeper to correct choices goes against interpretability. want small trees. 
-genetic (and other such) algorithms to optimize accuracy can be quite slow. Here, there is less of an issue as we assume we constrain the size of the tree to a small size. 
-
-RotationFeatures, ArithmeticFeatures and FormulaFeatures
-can combine these and create stronger DTs still. 
-
-Just a single class -- it infers from the target data the data type and handles the distinctions between regression and classification internally. 
-
-this supports regression, but it's difficult to have high accuracy with a shallow decision tree, even with a simple function. you need to zero in on the exact values. Possible only if the target column has relatively few unique values, or many, but in a small number of ranges. 
