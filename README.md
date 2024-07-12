@@ -71,3 +71,7 @@ genetic (and other such) algorithms to optimize accuracy can be quite slow. Here
 
 RotationFeatures, ArithmeticFeatures and FormulaFeatures
 can combine these and create stronger DTs still. 
+
+Just a single class -- it infers from the target data the data type and handles the distinctions between regression and classification internally. 
+
+this supports regression, but it's difficult to have high accuracy with a shallow decision tree, even with a simple function. you need to zero in on the exact values. Possible only if the target column has relatively few unique values, or many, but in a small number of ranges. 
