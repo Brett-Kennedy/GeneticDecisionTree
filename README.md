@@ -193,7 +193,7 @@ May be set False to reduce time and potentially overfitting. If True, combinatio
 
 **n_jobs**: int
 
-Controls the number of processes that may be created. Currently supports only 1 and -1.
+Controls the number of processes that may be created. 
 
 **random_state**: int
 
@@ -211,6 +211,8 @@ If set True, some output will be displayed during the fitting processes.
 gdt.fit(x, y)
 ```
 
+Fits the model to the training data provided. Internally, this generates a set of decision trees and selects the best-peforming with respect to the training data.
+
 ##
 
 ### predict()
@@ -218,6 +220,8 @@ gdt.fit(x, y)
 ```python
 y_pred = gdt.predict(x)
 ```
+Returns a prediction for each element in x.
+
 
 ##
 
@@ -226,7 +230,7 @@ y_pred = gdt.predict(x)
 ```python
 gdt.export_tree(x)
 ```
-
+Draws a representation of the final decision tree discovered during fitting and used during prediction. 
 
 ### Verbose Output
 The fit process allows verbose output. If this is enabled, each iteration we see:
