@@ -121,7 +121,7 @@ class InternalDecisionTree:
 class GeneticDecisionTree:
     def __init__(self,
                  max_depth=4,
-                 max_iterations=10,
+                 max_iterations=5,
                  allow_mutate=True,
                  allow_combine=True,
                  n_jobs=1,
