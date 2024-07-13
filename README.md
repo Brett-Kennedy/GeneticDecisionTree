@@ -24,15 +24,23 @@ Other work seeking to make Decision Trees more accurate and interpretable (accur
 
 Some tools such as ArithmeticFeatures, FormulaFeatures, RotationFeatures may be combined with GeneticDecisionTrees to create models that are more accurate still. 
 
-DTs can be fairly sensitive to the training data, so by using different bootstrap samples, can induce different trees. Also set the random_state differently each time. Doing this can generate a large number of trees and then test the trees as a whole. That is, decision trees are constructed in a greedy manner (though it is possible to constrain them and to prune them), which means each decision considers only the current split and this is based only on the data in this subspace. With Genetic Decision Trees, on the otherhand, the construction is largely random (other than the construction done by scikit-learn decision trees (which are used internally for some tree generation), but the decisions make during fitting relate to the fit of the tree as a whole to the available training data.
-
 there are many papers discussing creating decision trees using genetic algorithms. This is just one example, but does have a python implementation on github.
 
 
 ## Implementation Details
-interestingly, simply creating many dts based on boostrap samples and taking the best often works the best or nearly, and is quite fast.
+DecisionTrees can be fairly sensitive to the data used for training. This often leads to overfitting, but with the GeneticDecisionTree, we take advantage of this to generate random candidate models (along with varying the random seeds used). Internally, GeneticDecisionTree generates a set of scikit-learn decision trees, which are then converted into a structure specific to GeneticDecisionTrees (which makes the mutation and combination operations later simpler). To induce these scikit-learn decision trees, we fit them using different bootstrap samples of the original training data. 
 
-This also does mutations based on adjusting the thresholds. Can be set at one splitpoint during construction, but given the sub-trees built underneath them, a different can often work better, though typically only slightly. This works by taking the top 10 trees created so far, and creating 50 variations on each: picking 5 random nodes, and for each of these, 10 new thresholds.
+We also vary the size of the samples, allowing for more diversity. The sample sizes are based on a logarithmic distribution, so we are effectively selecting a random order of magnitude. This is limited to a minimum of 128 rows and a maximum of two times the full training set size. Smaller sizes are more common, but occasionaly larger sizes are used as well. 
+
+The algorithm starts by creating a small set of decision trees generated in this way. It then iterates a specified number of times (five by default), each iteration:
+- Randomly mutating the top-scored models created so far (those best fit to the training data).
+- Randomly combining two of the top-scored models created so far
+- Generating additional random trees using scikit-learn and random bootstrap samples (less of these are generated each iteration, as it becomes more difficult to compete with the models that have experience mutating and/or combining).
+
+Each iteration, a significant number of trees are generated. Each is then evaluated on the training data. Standard decision trees are constructed in a purely greedy manner (though it is possible to constrain them and to prune them), considering only the information gain for each possibly split at each internal node. With Genetic Decision Trees, on the otherhand, the construction is largely random (other than the construction done by scikit-learn decision trees, which are used internally for some tree generation), but the decisions made during fitting relate to the fit of the tree as a whole to the available training data. This tends to generate a final result that fits the training better than a greedy approach allows. 
+
+Having said this, an interesting finding is that, even while not performing mutations or combinations each iteration (these operations are configurable and may be set to False to allow faster execution times), GeneticDecisionTrees tend to be more accurate than standard Decision Trees limited to the same (small) size. This is, though, as expected: simply by trying many sets of possible choices for the internal nodes in a decision tree, some will perform better than a tree constructed in the normal greedy fashion.
+
 
 And does combinations. Where two trees among the top 20 have the same feature in the root node, will create 2 combinations: one with the left sub-tree from the first parent tree and the right sub-tree from the second parent tree, and one that's the reverse. 
 
@@ -48,6 +56,9 @@ If we just use random, it's a bit like a RF. Many trees based on bootstrap sampl
 
 ### Mutating
 can also rotate nodes, but doesn't tend to work well. future work may improve this. 
+
+This also does mutations based on adjusting the thresholds. Can be set at one splitpoint during construction, but given the sub-trees built underneath them, a different can often work better, though typically only slightly. This works by taking the top 10 trees created so far, and creating 50 variations on each: picking 5 random nodes, and for each of these, 10 new thresholds.
+
 
 ### Combining
 
