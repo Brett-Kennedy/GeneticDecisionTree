@@ -105,13 +105,13 @@ print("Genetic DT:", f1_score(y_test, y_pred, average='macro'))
 GeneticDecisionTree is a single class used for both classification and regression. It infers from the target data the data type and handles the distinctions between regression and classification internally. 
 
 ## Example Notebooks
-(Simple Example)[https://github.com/Brett-Kennedy/GeneticDecisionTree/blob/main/Examples/Simple_Examples.ipynb]
+[Simple Example](https://github.com/Brett-Kennedy/GeneticDecisionTree/blob/main/Examples/Simple_Examples.ipynb)
 This provides a small number of examples with real (toy) and synthetic data, both for classification and regression. 
 
 The first example uses the Wine dataset, available with scikit-learn. Using a depth of 2, GeneticDecisionTree achieves an F1 macro score on a hold-out test set of 0.97 as compared to 0.88 for a standard decision tree.
 
 GeneticDecisionTrees provide and export_tree() method similar to scikit-learn Decision Trees. In this case, it produces a very simple tree:
-
+```
 IF flavanoids < 1.4000
 | IF color_intensity < 3.7250
 | | 1
@@ -122,10 +122,10 @@ ELSE flavanoids > 1.4000
 | | 1
 | ELSE proline > 724.5000
 | | 0
-
+```
 For the most part, the examples use max_depth=4 as this tends to achieve high performance while being reasonably interpretable. 
 
-(TestClassification)[https://github.com/Brett-Kennedy/GeneticDecisionTree/blob/main/Examples/Test_Classification.ipynb]
+[TestClassification](https://github.com/Brett-Kennedy/GeneticDecisionTree/blob/main/Examples/Test_Classification.ipynb)
 This provides an extensive test of GeneticDecisionTrees. It tests with a large number of test sets from OpenML and for each create a standard Decision Tree and 4 GeneticDecisionTrees: each combination of allowing mutations and allowing combinations.
 
 In almost all cases, at least one, or often all four, variations of the GeneticDecisionTree strongly out perform the standard decsision tree, again using F1 macro scores. A subset of this is shown here:
@@ -134,7 +134,7 @@ In almost all cases, at least one, or often all four, variations of the GeneticD
 
 Given the large number of cases tested, running this notebook is quite slow. It is also not a defintive evaluation. It uses only a limited set of test files, uses only default parameters other than max_depth, and tests only the F1 macro scores. It does, however, demonstrate the GeneticDecisionTrees can be effective and interpretable models in many cases. 
 
-(TestRegression)[https://github.com/Brett-Kennedy/GeneticDecisionTree/blob/main/Examples/Test_Regression.ipynb]
+[TestRegression](https://github.com/Brett-Kennedy/GeneticDecisionTree/blob/main/Examples/Test_Regression.ipynb)
 This provides another example using Genetic Decision Trees for regression, but as indicated, the gains will tend to be minimal if there are any. 
 
 ## Tuning
