@@ -147,7 +147,7 @@ class GeneticDecisionTree:
             be created taking the left sub-tree of one node and right sub-tree on another node.
 
         :param n_jobs: int
-            Controls the number of processes that may be created. Currently supports only 1 and -1.
+            Controls the number of processes that may be created. 
 
         :param random_state: int
             Used to make any random processes repeatable.
