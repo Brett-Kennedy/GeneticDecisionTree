@@ -26,7 +26,6 @@ Some tools such as ArithmeticFeatures, FormulaFeatures, RotationFeatures may be 
 
 there are many papers discussing creating decision trees using genetic algorithms. This is just one example, but does have a python implementation on github.
 
-
 ## Implementation Details
 DecisionTrees can be fairly sensitive to the data used for training. This often leads to overfitting, but with the GeneticDecisionTree, we take advantage of this to generate random candidate models (along with varying the random seeds used). Internally, GeneticDecisionTree generates a set of scikit-learn decision trees, which are then converted into a structure specific to GeneticDecisionTrees (which makes the mutation and combination operations later simpler). To induce these scikit-learn decision trees, we fit them using different bootstrap samples of the original training data. 
 
@@ -41,17 +40,19 @@ Each iteration, a significant number of trees are generated. Each is then evalua
 
 Having said this, an interesting finding is that, even while not performing mutations or combinations each iteration (these operations are configurable and may be set to False to allow faster execution times), GeneticDecisionTrees tend to be more accurate than standard Decision Trees limited to the same (small) size. This is, though, as expected: simply by trying many sets of possible choices for the internal nodes in a decision tree, some will perform better than a tree constructed in the normal greedy fashion.
 
+Where mutations and combinations are enabled, generally after one or two iterations, most of the top-scored candidate Decision Trees (the trees that fit the training data the best) will be based on mutating and/or combining other strong models. That is, enabling mutating and combining does tend to generate stronger models.
 
-And does combinations. Where two trees among the top 20 have the same feature in the root node, will create 2 combinations: one with the left sub-tree from the first parent tree and the right sub-tree from the second parent tree, and one that's the reverse. 
+## Execution Time
+This improvement in accuracy over standard decision trees does come at the cost of time, but for most datasets, fitting is still only 1 to 5 minutes, depending on the parameters specified. This is compared to training standard decision trees, which is often under a second. Nevertheless, a few minutes can often be warranted to generate an interpretable model, particularly when creating an accurate, interpretable model can often be quite challenging. 
 
-Genetic Decision Trees are slower. But manageable. Can disable creating mutations or combinations if want faster. Then will just create random trees based on bootstrap samples.
+Limiting the number of iterations to only 1 or 2 can often still achieve strong results. As expected, there are diminishing returns over time, and some increase in the chance of overfitting. 
+
+It may be reasonable in some cases to disable mutations or combination and instead generate only a series of random trees based on random bootstrap samples. Where sufficient accuracy can be achieved in this way, this may be all that's necessary. 
 
 ### Generating Random Decision Trees
-Uses log scale to get size of sample. can be up to 2* the actual size, but usually much smaller. At least 128.
+Where the model is run without mutations or combinations, we have only a series of random trees, and consequently do not execute a genetic algorithm. It may, nevertheless, be reasonable to do this, particularly where execution time is important. Test results below show this often works as well or nearly as allowing mutations and combinations. 
 
-if disable mutations and combinations, just have random trees, so not really a genetic algorithm in this case, but can nevertheless generate strong trees, and is much faster. Is worth trying both. 
-
-If we just use random, it's a bit like a RF. Many trees based on bootstrap sample. Though, uses the best tree instead of an ensemble of many. 
+Using this approach, we effectively model the data in a way similar to a RandomForest, which is also based on a set of decision trees, each trained on a random bootstrap sample. However, RandomForests will use all Decision Trees created and combine their predictions, while GeneticDecisionTree retains only the single, strongest of these DecisionTrees. 
 
 
 ### Mutating
@@ -61,6 +62,7 @@ This also does mutations based on adjusting the thresholds. Can be set at one sp
 
 
 ### Combining
+And does combinations. Where two trees among the top 20 have the same feature in the root node, will create 2 combinations: one with the left sub-tree from the first parent tree and the right sub-tree from the second parent tree, and one that's the reverse. 
 
 ### Overfitting
 Decision Trees commonly overfit, and GeneticDecisionTrees may as well. 
