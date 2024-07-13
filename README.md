@@ -43,7 +43,7 @@ Despite the utiltiy of the genetic process, an interesting finding is that: even
 
 Where mutations and combinations are enabled, generally after one or two iterations, most of the top-scored candidate Decision Trees (the trees that fit the training data the best) will be based on mutating and/or combining other strong models. That is, enabling mutating and combining does tend to generate stronger models.
 
-## Execution Time
+### Execution Time
 This improvement in accuracy over standard decision trees does come at the cost of time, but for most datasets, fitting is still only about 1 to 5 minutes, depending on the parameters specified. This is quite slow compared to training standard decision trees, which is often under a second. Nevertheless, a few minutes can often be warranted to generate an interpretable model, particularly when creating an accurate, interpretable model can often be quite challenging. 
 
 Limiting the number of iterations to only 1 or 2 can reduce the training time and can often still achieve strong results. As expected, there are diminishing returns over time using additional iterations, and some increase in the chance of overfitting. 
@@ -105,7 +105,8 @@ print("Genetic DT:", f1_score(y_test, y_pred, average='macro'))
 GeneticDecisionTree is a single class used for both classification and regression. It infers from the target data the data type and handles the distinctions between regression and classification internally. 
 
 ## Example Notebooks
-[Simple Example](https://github.com/Brett-Kennedy/GeneticDecisionTree/blob/main/Examples/Simple_Examples.ipynb)
+**[Simple Example](https://github.com/Brett-Kennedy/GeneticDecisionTree/blob/main/Examples/Simple_Examples.ipynb)**
+
 This provides a small number of examples with real (toy) and synthetic data, both for classification and regression. 
 
 The first example uses the Wine dataset, available with scikit-learn. Using a depth of 2, GeneticDecisionTree achieves an F1 macro score on a hold-out test set of 0.97 as compared to 0.88 for a standard decision tree.
@@ -125,7 +126,8 @@ ELSE flavanoids > 1.4000
 ```
 For the most part, the examples use max_depth=4 as this tends to achieve high performance while being reasonably interpretable. 
 
-[TestClassification](https://github.com/Brett-Kennedy/GeneticDecisionTree/blob/main/Examples/Test_Classification.ipynb)
+**[TestClassification](https://github.com/Brett-Kennedy/GeneticDecisionTree/blob/main/Examples/Test_Classification.ipynb)**
+
 This provides an extensive test of GeneticDecisionTrees. It tests with a large number of test sets from OpenML and for each create a standard Decision Tree and 4 GeneticDecisionTrees: each combination of allowing mutations and allowing combinations.
 
 In almost all cases, at least one, or often all four, variations of the GeneticDecisionTree strongly out perform the standard decsision tree, again using F1 macro scores. A subset of this is shown here:
@@ -134,16 +136,16 @@ In almost all cases, at least one, or often all four, variations of the GeneticD
 
 Given the large number of cases tested, running this notebook is quite slow. It is also not a defintive evaluation. It uses only a limited set of test files, uses only default parameters other than max_depth, and tests only the F1 macro scores. It does, however, demonstrate the GeneticDecisionTrees can be effective and interpretable models in many cases. 
 
-[TestRegression](https://github.com/Brett-Kennedy/GeneticDecisionTree/blob/main/Examples/Test_Regression.ipynb)
+**[TestRegression](https://github.com/Brett-Kennedy/GeneticDecisionTree/blob/main/Examples/Test_Regression.ipynb)**
+
 This provides another example using Genetic Decision Trees for regression, but as indicated, the gains will tend to be minimal if there are any. 
 
 ## Tuning
-GeneticDecisionTrees have few parameters, simplifying tuning. 
+GeneticDecisionTrees have few parameters, simplifying tuning. In fitting, we specify only the maximum depth of the final tree, the number of iterations, and if we allow mutating or combining. In general, more iterations is preferred with respect to accuracy, though the additional work beyond a few iterations may not produce substantial improvements. A random_state parameter is also provided to allow tuning this as well, which may result in better candidate models being produced or better mutations being performed. 
 
-can try running with no mutating or combining. That's not really genetic, but can be fine, and is much faster. If good enough, you're done. If not, can run longer, or can try mutating & combining. Usually get a bit better results.
-usually more iterations is better, but is more inclined to overfit. Does not get more complex though, just tries more combinations. 
+In one of the synthetic datasets included in the sample notebook, the tree generated looks like:
 
-With the synthetic data, the tree found looks like:
+```
 IF c < 0.9016
 | IF b < 0.9098
 | | IF a < 0.6904
@@ -151,17 +153,89 @@ IF c < 0.9016
 | | | | W
 | | | ELSE d > 0.7046
 | | | | W
-
-We can see the thresholds are close to the true thresholds, but not quite. Adjust may be helpful.
+```
+In this case, the true function is known, and the actual thresholds are 0.9, 0.7, and so on, indicating the threshods discovered are very close, but random changes followed be evaluation may push them to more accurate values. 
 
 ## Installation
+The tool is contained in a single .py file, [genetic_decision_tree.py](https://github.com/Brett-Kennedy/GeneticDecisionTree/blob/main/genetic_decision_tree.py), which may simply be downloaded and imported into any project. It uses only standard python libraries. 
 
 
 ## API
 
+### GeneticDecisionTree
+
+```python
+    gdt = GeneticDecisionTree(
+        max_depth=4,
+        max_iterations=10,
+        allow_mutate=True,
+        allow_combine=True,
+        n_jobs=1,
+        verbose=False)
+```
+
+**Parameters**
+
+**max_depth**: int
+
+The maximum depth the tree may grow to. The smaller, the more interpretable, but typically less accurate.
+
+**max_iterations**: int
+
+The number of iterations the fit algorithm will execute. Each iteration, a number of trees are created (either randomly or based on the previously-created trees). At the end of each iteration, the top trees are kept and taken as the starting point for the next iteration.
+
+**allow_mutate**: bool
+
+May be set False to reduce time and potentially overfitting. If True, variations of existing trees will be created based on modifying the thresholds of random nodes to random values.
+
+**allow_combine**: bool
+
+May be set False to reduce time and potentially overfitting. If True, combinations of existing nodes will be created taking the left sub-tree of one node and right sub-tree on another node.
+
+**n_jobs**: int
+
+Controls the number of processes that may be created. Currently supports only 1 and -1.
+
+**random_state**: int
+
+Used to make any random processes repeatable.
+
+**verbose**: bool
+
+If set True, some output will be displayed during the fitting processes.
+
+##
+
+### fit
+
+```python
+gdt.fit(x, y)
+```
+
+##
+
+### predict()
+
+```python
+y_pred = gdt.predict(x)
+```
+
+##
+
+### export_tree()
+
+```python
+gdt.export_tree(x)
+```
+
 
 ### Verbose Output
-describe this
+The fit process allows verbose output. If this is enabled, each iteration we see:
+- the iteration count
+- The scores of the top trees discovered so far. This is the training scores and may be over-optimistic relative to the test scores. It is shown to indicate the progress of the fitting process.
+- The number of the top trees discovered so far that are either:
+  - mutated variations of other trees or are descended (through combinations) from one or more trees that included mutations
+  - combinations of other trees or are descended (through mutation) from one or more other trees that were combinations
 
 
 
