@@ -2,26 +2,31 @@
 Decision Tree built using a genetic algorithm
 
 ## Motiviation
+It's often useful in machine learning to use interpretable models for prediction problems, either as the actual model, or to use as proxy models to approximate the behaviour of the actual (blackbox) models. Decision trees, at least when constrained to reasonable sizes are quite comprehensible, and are excellent interpretable models when they are sufficiently accurate. However, decision trees are often inaccurate, at least relative to stronger models for tabular data such as CatBoost, XGBoost, and LGBM (which are themselves boosted ensembled of decision trees). As well, where decision trees are suffiently accurate, this accuracy is often acheived by allowing the tree to grow to a large size, thereby eliminating any interpretability.
 
-the greedy approach used by DTs is far from optimal. It is fast, which was necessary historically with slower computers, even with usually smaller data. And is useful in bagged & boosted ensembles (eg RandomForest, ExtraTrees, CatBoost, XGBoost, LGBM, ect.)
+The greedy approach used by Decision Trees is often quite sub-optimal, though does allow trees to be contructed very quickly. Historically, this was more pressing given lower-powered computer systems, and in a modern context, can be very useful, as it allows constructing large numbers of decision trees in models based on ensembles of decision trees. However, to create a single decision tree that is both accurate and interpretable (of a manageable size), using a greedy algorithm is very limiting. 
 
-but is not optimal, and often other trees of the same size can be more accurate.
+With standard decision trees, the selection of the feature and the threshold at each node is a one-shot deal. While the trees can compensate for poor modeling choices lower in the tree, this will usually reduce interpretability and may not fully mitigate the effects of the choices of split points above. Decision trees are stuck with the choices for split points once these splits are selected. 
 
-Is other work trying to make DTs more reliable, including Optimal Sparce Decision Trees, oblique decision trees, oblivious trees, AdditiveDecisionTrees, FormulaFeatures. 
+## Genetic Algorithsm
+Genetic algorihms typically proceed by starting with a number of candidate solutions to a problem, then iterating many times, with each iteration selecting the strongest candidates, removing the others, and creating a new set of candidate solutions. This may be done either by mutating (randomly modifying) and existing model or by combining two or more into a new model, simulating sexual reproduction as seen in real-world evolutionary processes. In this way, over time, as set of progressively stronger tends to emerge.
 
-DTs are naturally quite interpretable if kept to small size but are still accurate, so it's natural much of the work in interpretable AI, including my own, has worked with trying to make decision trees more accurate and interpretable. 
+It's also possible to regularly generate completely new random models. Although these have not had the benefit of mutations or combining, they many nevertheless, by chance, be as strong as some more evolved-solutions, though this is progressively less likely. 
+
+Applied to the construction of decision trees, genetic algorithms create a set of candidate decision trees, select the best of these, mutate and combine these (possibly both deriving new offspring from multiple existing models and mutating these). This steps may be repeated any number of times, each time changing either the feature (and threshold), or simply the threshold, used in one or more nodes. 
+
+This process can be slow, requiring many iterations before substantial improvements in accuracy are seen, but in this case, our interest is in interpretability, and so we can assume all decision trees are reasonably small, likely with a maximum depth of 2 to 5. 
+
+There have been over time a number of proposals for genetic algorithms for decision trees. This solution provides python code on github, but is far from the first and many other solutions may work better for your projects. In particular, this solution, though reasonably efficient, has had only moderate performance optimizing and is far slower than standard decision trees, particularly when executing over many iterations. However, testing has found using just 3 to 5 iterations is usually quite sufficient to realize substantial improvements for classification as compared to scikit-learn decision trees. Regression is a more difficult problem in this context, as covered below. But, for classification, this tool can be a very useful tool to try, often allowing accurate trees of fairly small sizes. 
+
+## Other Approaches to Creating Stronger Decision Trees
+Other work seeking to make Decision Trees more accurate and interpretable (accurate at a constained size) includ Optimal Sparce Decision Trees, oblique decision trees, AdditiveDecisionTrees, FormulaFeatures, and various rule-based systems, such as in imodels. While rules are not equivalent to decision trees, they may often be used in a similar way and offer similar levels of interpretability.
+
+Some tools such as ArithmeticFeatures, FormulaFeatures, RotationFeatures may be combined with GeneticDecisionTrees to create models that are more accurate still. 
 
 DTs can be fairly sensitive to the training data, so by using different bootstrap samples, can induce different trees. Also set the random_state differently each time. Doing this can generate a large number of trees and then test the trees as a whole. That is, decision trees are constructed in a greedy manner (though it is possible to constrain them and to prune them), which means each decision considers only the current split and this is based only on the data in this subspace. With Genetic Decision Trees, on the otherhand, the construction is largely random (other than the construction done by scikit-learn decision trees (which are used internally for some tree generation), but the decisions make during fitting relate to the fit of the tree as a whole to the available training data.
 
 there are many papers discussing creating decision trees using genetic algorithms. This is just one example, but does have a python implementation on github.
-
-There's also optimal sparce decision trees.
-
-standard DTs, though choices may be sub-optimal, can compensate lower in the tree. Are stuck with the choices though. And going deeper to correct choices goes against interpretability. want small trees. 
-genetic (and other such) algorithms to optimize accuracy can be quite slow. Here, there is less of an issue as we assume we constrain the size of the tree to a small size. 
-
-RotationFeatures, ArithmeticFeatures and FormulaFeatures
-can combine these and create stronger DTs still. 
 
 
 ## Implementation Details
@@ -54,6 +59,8 @@ like most models, tries to fit the training data as well as it can, so can overf
 ## Regression
 
 this supports regression, but it's difficult to have high accuracy with a shallow decision tree, even with a simple function. you need to zero in on the exact values. Possible only if the target column has relatively few unique values, or many, but in a small number of ranges. 
+
+can work unconstrained. but then not interpretable. may be more accurate, but likely better to use an ensemble of trees, such as RandomForest, XGBoost, CatBoost, ExtraTrees, or others.
 
 
 ## Examples
