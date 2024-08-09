@@ -8,6 +8,8 @@ The greedy approach used by Decision Trees is often quite sub-optimal, though do
 
 With standard decision trees, the selection of the feature and threshold at each node is a one-time decision: decision trees are limited to the choices made for split points once these splits are selected.  While the trees can (at lower levels) compensate for poor modeling choices higher in the tree, this will usually reduce interpretability and may not fully mitigate the effects of the choices of split points above. 
 
+For a full discussion, see the [article on Medium](https://medium.com/towards-data-science/create-stronger-decision-trees-with-bootstrapping-and-genetic-algorithms-1ae633a993c9). 
+
 ## Genetic Algorithms
 Genetic algorithms typically proceed by starting with a number of candidate solutions to a problem, then iterating many times, with each iteration selecting the strongest candidates, removing the others, and creating a new set of candidate solutions. This may be done either by mutating (randomly modifying) an existing model or by combining two or more into a new model, simulating reproduction as seen in real-world evolutionary processes. In this way, over time, a set of progressively stronger candidates tends to emerge.
 
